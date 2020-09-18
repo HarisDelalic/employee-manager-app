@@ -42,4 +42,8 @@ public class User implements Serializable {
     private Set<Role> roles;
     private boolean isActive;
     private boolean isLocked;
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 }

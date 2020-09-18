@@ -1,9 +1,16 @@
 package com.dela.employeemanagerapp.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Getter
+@Builder
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,4 +29,6 @@ public class Role {
             )
     )
     private Set<Authority> authorities;
+
+
 }
