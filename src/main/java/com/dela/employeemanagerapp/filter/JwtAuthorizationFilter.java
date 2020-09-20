@@ -66,7 +66,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     private boolean authorizationHeaderExists(String authorizationHeader) {
-        return authorizationHeader == null || !authorizationHeader.startsWith(TOKEN_PREFIX);
+        return authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX);
     }
 }
 
