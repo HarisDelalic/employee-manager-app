@@ -2,6 +2,7 @@ package com.dela.employeemanagerapp.service;
 
 import com.dela.employeemanagerapp.domain.User;
 import com.dela.employeemanagerapp.domain.UserPrincipal;
+import com.dela.employeemanagerapp.exception.domain.UserNotFoundException;
 import com.dela.employeemanagerapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +25,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         User foundUser = userRepository.findUserByUsername(username).map(user -> {
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(LocalDate.now());
             return userRepository.save(user);
         }).orElseThrow(() ->  {
             log.error("User with username: " + username + " not found");
-            throw new UsernameNotFoundException("User with username: " + username + " not found");
+            throw new UserNotFoundException("User with username: " + username + " not found");
         });
 
         return new UserPrincipal(foundUser);

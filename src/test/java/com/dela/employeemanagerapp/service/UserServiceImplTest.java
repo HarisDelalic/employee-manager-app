@@ -2,6 +2,7 @@ package com.dela.employeemanagerapp.service;
 
 import com.dela.employeemanagerapp.domain.Role;
 import com.dela.employeemanagerapp.domain.User;
+import com.dela.employeemanagerapp.exception.domain.UserNotFoundException;
 import com.dela.employeemanagerapp.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +63,7 @@ class UserServiceImplTest {
     void givenUserDoesNotExists_exceptionIsThrown() {
         given(userRepository.findUserByUsername(USERNAME)).willReturn(Optional.empty());
 
-        Exception exception = assertThrows(UsernameNotFoundException.class, () -> {
+        Exception exception = assertThrows(UserNotFoundException.class, () -> {
             userService.loadUserByUsername(USERNAME);
         });
 
