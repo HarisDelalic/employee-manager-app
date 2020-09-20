@@ -3,6 +3,7 @@ package com.dela.employeemanagerapp.constant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.context.support.ResourceBundleMessageSource;
 
 import java.util.Locale;
@@ -12,12 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class SecurityConstantTest {
     private static final String SECURITY_PREFIX = "security.";
 
-    ResourceBundleMessageSource messageSource;
+    ReloadableResourceBundleMessageSource messageSource;
 
     @BeforeEach
     void setUp() {
-        messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename("security_messages");
+        messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:/messages/security_messages");
         messageSource.setDefaultEncoding("UTF8");
     }
 
