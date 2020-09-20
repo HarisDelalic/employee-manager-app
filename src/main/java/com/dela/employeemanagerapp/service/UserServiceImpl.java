@@ -5,6 +5,7 @@ import com.dela.employeemanagerapp.domain.UserPrincipal;
 import com.dela.employeemanagerapp.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +15,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 
 @Service
+@Qualifier("userServiceImpl")
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
