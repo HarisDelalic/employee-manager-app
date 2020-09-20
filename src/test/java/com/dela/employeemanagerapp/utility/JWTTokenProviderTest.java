@@ -76,7 +76,7 @@ class JWTTokenProviderTest {
                 "vcml0eTpkZWxldGUiLCJhdXRob3JpdHk6d3JpdGUiLCJhdXRob3JpdHk6cmVhZCJdfQ" +
                 ".7EhW5dPS5I7hgBapilYb_pCH4rqh7JfXIoZFAy5yTVSc-MWWJpxcrfxOVcyHfWvbcUIOjTHs6iLW6nWYMIhG9A\n";
 
-        Set<GrantedAuthority> claimsFromJwtToken = jwtTokenProvider.getClaimsFromJwtToken(jwtToken);
+        Set<GrantedAuthority> claimsFromJwtToken = jwtTokenProvider.getAuthoritiesFromJwtToken(jwtToken);
 
         assertThat(claimsFromJwtToken).contains(new SimpleGrantedAuthority("authority:read"),
                 new SimpleGrantedAuthority("authority:write"),

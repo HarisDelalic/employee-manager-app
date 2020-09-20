@@ -56,7 +56,7 @@ public class JWTTokenProvider {
                 .toArray(String[]::new);
     }
 
-    public Authentication getAuthentication(String username, List<GrantedAuthority> authorities, HttpServletRequest request) {
+    public Authentication getAuthentication(String username, Set<GrantedAuthority> authorities, HttpServletRequest request) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(username, null, authorities);
         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -86,7 +86,7 @@ public class JWTTokenProvider {
         return verifier.verify(token).getSubject();
     }
 
-    public Set<GrantedAuthority> getClaimsFromJwtToken(String jwtToken) {
+    public Set<GrantedAuthority> getAuthoritiesFromJwtToken(String jwtToken) {
         JWTVerifier verifier = getJwtVerifier();
 
         List<String> claims = verifier.verify(jwtToken).getClaim(AUTHORITIES).asList(String.class);
