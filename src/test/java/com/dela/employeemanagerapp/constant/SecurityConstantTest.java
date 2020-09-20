@@ -25,8 +25,6 @@ class SecurityConstantTest {
     public void testSecurityConstantsEN() {
         assertEquals("Token can not be verified",
                 messageSource.getMessage(SECURITY_PREFIX + "token_cant_be_verified", null, Locale.ENGLISH));
-        assertEquals("authorities",
-                messageSource.getMessage(SECURITY_PREFIX + "authorities", null, Locale.ENGLISH));
         assertEquals("You need to log in to access this page",
                 messageSource.getMessage(SECURITY_PREFIX + "forbidden_message", null, Locale.ENGLISH));
         assertEquals("You do not have permission to access this page",
@@ -37,8 +35,6 @@ class SecurityConstantTest {
     public void testSecurityConstantsDE() {
         assertEquals("Token kann nicht überprüft werden",
                 messageSource.getMessage(SECURITY_PREFIX + "token_cant_be_verified", null, Locale.GERMAN));
-        assertEquals("Behörden",
-                messageSource.getMessage(SECURITY_PREFIX + "authorities", null, Locale.GERMAN));
         assertEquals("Sie müssen sich anmelden, um auf diese Seite zugreifen zu können",
                 messageSource.getMessage(SECURITY_PREFIX + "forbidden_message", null, Locale.GERMAN));
         assertEquals("Sie haben keine Berechtigung, auf diese Seite zuzugreifen",
