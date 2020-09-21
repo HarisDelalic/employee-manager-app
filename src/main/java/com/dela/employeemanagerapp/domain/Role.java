@@ -1,24 +1,26 @@
 package com.dela.employeemanagerapp.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import com.dela.employeemanagerapp.domain.enums.RoleEnum;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 @Getter
+@Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private RoleEnum name;
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "role_authorities",
             joinColumns = @JoinColumn(
@@ -29,6 +31,10 @@ public class Role {
             )
     )
     private Set<Authority> authorities;
+
+    public static Role of(RoleEnum roleEnum) {
+        return Role.builder().name(roleEnum).build();
+    }
 
 
 }

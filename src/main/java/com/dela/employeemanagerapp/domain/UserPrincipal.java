@@ -6,7 +6,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class UserPrincipal implements UserDetails {
     private User user;
@@ -19,7 +18,7 @@ public class UserPrincipal implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
        return user.getRoles().stream()
                .flatMap(role -> role.getAuthorities().stream())
-               .map(authority -> new SimpleGrantedAuthority(authority.getName()))
+               .map(authority -> new SimpleGrantedAuthority(authority.getName().getValue()))
                .collect(Collectors.toUnmodifiableSet());
     }
 

@@ -1,3 +1,7 @@
 package com.dela.employeemanagerapp.service;
 
-public interface UserService { }
+import com.dela.employeemanagerapp.domain.User;
+
+public interface UserService {
+    User register(User user);
+}

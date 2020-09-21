@@ -31,7 +31,7 @@ public class User implements Serializable {
     private LocalDate lastLoginDate;
     private LocalDate lastLoginDateDisplay;
     private LocalDate joinDate;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(

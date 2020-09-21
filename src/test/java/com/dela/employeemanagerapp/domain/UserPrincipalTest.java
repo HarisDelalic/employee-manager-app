@@ -1,5 +1,7 @@
 package com.dela.employeemanagerapp.domain;
 
+import com.dela.employeemanagerapp.domain.enums.AuthorityEnum;
+import com.dela.employeemanagerapp.domain.enums.RoleEnum;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -17,46 +19,41 @@ class UserPrincipalTest {
         User user = new User();
 
         Authority read = Authority.builder()
-                .id(1L)
-                .name("authority:read")
+                .name(AuthorityEnum.USER_READ)
                 .build();
-        Authority write = Authority.builder()
-                .id(2L)
-                .name("authority:write")
+        Authority update = Authority.builder()
+                .name(AuthorityEnum.USER_UPDATE)
+                .build();
+        Authority create = Authority.builder()
+                .name(AuthorityEnum.USER_CREATE)
                 .build();
         Authority delete = Authority.builder()
-                .id(2L)
-                .name("authority:delete")
+                .name(AuthorityEnum.USER_DELETE)
                 .build();
 
         Role userRole = Role.builder()
-                .id(1L)
-                .name("ROLE_USER")
+                .name(RoleEnum.ROLE_USER)
                 .users(Set.of(user))
-                .authorities(Set.of(read, write))
+                .authorities(Set.of(read))
                 .build();
 
-        Role adminRole = Role.builder()
-                .id(1L)
-                .name("ROLE_ADMIN")
+        Role superUserRole = Role.builder()
+                .name(RoleEnum.ROLE_SUPERUSER)
                 .users(Set.of(user))
-                .authorities(Set.of(read, write, delete))
+                .authorities(Set.of(read, update, create, delete))
                 .build();
 
-        user.setRoles(Set.of(userRole, adminRole));
-        read.setRoles(Set.of(userRole));
-        write.setRoles(Set.of(userRole));
-        delete.setRoles(Set.of(userRole));
-
+        user.setRoles(Set.of(userRole, superUserRole));
 
         UserPrincipal userPrincipal = new UserPrincipal(user);
 
         Collection<? extends SimpleGrantedAuthority> authorities = Set.of(
-                new SimpleGrantedAuthority(write.getName()),
-                new SimpleGrantedAuthority(read.getName()),
-                new SimpleGrantedAuthority(delete.getName())
+                new SimpleGrantedAuthority(AuthorityEnum.USER_READ.getValue()),
+                new SimpleGrantedAuthority(AuthorityEnum.USER_UPDATE.getValue()),
+                new SimpleGrantedAuthority(AuthorityEnum.USER_CREATE.getValue()),
+                new SimpleGrantedAuthority(AuthorityEnum.USER_DELETE.getValue())
         );
 
-        assertEquals(userPrincipal.getAuthorities(), authorities);
+        assertEquals(authorities, userPrincipal.getAuthorities());
     }
 }

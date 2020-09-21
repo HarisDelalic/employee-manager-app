@@ -4,6 +4,8 @@ import com.dela.employeemanagerapp.domain.Authority;
 import com.dela.employeemanagerapp.domain.Role;
 import com.dela.employeemanagerapp.domain.User;
 import com.dela.employeemanagerapp.domain.UserPrincipal;
+import com.dela.employeemanagerapp.domain.enums.AuthorityEnum;
+import com.dela.employeemanagerapp.domain.enums.RoleEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,34 +28,34 @@ class JWTTokenProviderTest {
 
         Authority read = Authority.builder()
                 .id(1L)
-                .name("authority:read")
+                .name(AuthorityEnum.USER_READ)
                 .build();
-        Authority write = Authority.builder()
+        Authority update = Authority.builder()
                 .id(2L)
-                .name("authority:write")
+                .name(AuthorityEnum.USER_UPDATE)
                 .build();
         Authority delete = Authority.builder()
-                .id(3L)
-                .name("authority:delete")
+                .id(2L)
+                .name(AuthorityEnum.USER_DELETE)
                 .build();
 
         Role userRole = Role.builder()
                 .id(1L)
-                .name("ROLE_USER")
+                .name(RoleEnum.ROLE_USER)
                 .users(Set.of(user))
-                .authorities(Set.of(read, write))
+                .authorities(Set.of(read))
                 .build();
 
-        Role adminRole = Role.builder()
+        Role superUserRole = Role.builder()
                 .id(1L)
-                .name("ROLE_ADMIN")
+                .name(RoleEnum.ROLE_SUPERUSER)
                 .users(Set.of(user))
-                .authorities(Set.of(read, write, delete))
+                .authorities(Set.of(read, update, delete))
                 .build();
 
-        user.setRoles(Set.of(userRole, adminRole));
+        user.setRoles(Set.of(userRole, superUserRole));
         read.setRoles(Set.of(userRole));
-        write.setRoles(Set.of(userRole));
+        update.setRoles(Set.of(userRole));
         delete.setRoles(Set.of(userRole));
 
         jwtTokenProvider = new JWTTokenProvider();

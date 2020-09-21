@@ -2,6 +2,7 @@ package com.dela.employeemanagerapp.service;
 
 import com.dela.employeemanagerapp.domain.Role;
 import com.dela.employeemanagerapp.domain.User;
+import com.dela.employeemanagerapp.domain.enums.RoleEnum;
 import com.dela.employeemanagerapp.exception.domain.UserNotFoundException;
 import com.dela.employeemanagerapp.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -40,7 +40,7 @@ class UserServiceImplTest {
     void setUp() {
         user = User.builder()
                 .username(USERNAME)
-                .roles(Set.of(Role.builder().name(USERNAME).build()))
+                .roles(Set.of(Role.builder().name(RoleEnum.ROLE_USER).build()))
                 .build();
     }
 
