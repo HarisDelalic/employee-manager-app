@@ -22,16 +22,23 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<HttpResponse> handleUserNotFoundException(UserNotFoundException ex) {
 
+        HttpResponse httpResponse =
+                createResponse(HttpStatus.NOT_FOUND, ex, "exception_message_user_not_found");
+
+        return new ResponseEntity<>(httpResponse, HttpStatus.NOT_FOUND);
+    }
+
+    private HttpResponse createResponse(HttpStatus status, Exception ex, String message_code) {
         HttpResponse httpResponse = HttpResponse.builder()
                 .timeStamp(LocalDateTime.now())
-                .httpStatusCode(HttpStatus.NOT_FOUND.value())
-                .httpStatus(HttpStatus.NOT_FOUND)
+                .httpStatusCode(status.value())
+                .httpStatus(status)
                 .message(ex.getMessage())
-                .reason(exceptionMessageSource.getMessage("exception_message_user_not_found",
+                .reason(exceptionMessageSource.getMessage(message_code,
                         null,
                         LocaleContextHolder.getLocale()))
                 .build();
 
-        return new ResponseEntity<>(httpResponse, HttpStatus.NOT_FOUND);
+        return httpResponse;
     }
 }
