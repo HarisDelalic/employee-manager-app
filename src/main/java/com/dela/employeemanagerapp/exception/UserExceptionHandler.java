@@ -2,10 +2,7 @@ package com.dela.employeemanagerapp.exception;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.dela.employeemanagerapp.domain.HttpResponse;
-import com.dela.employeemanagerapp.exception.domain.EmailExistsException;
-import com.dela.employeemanagerapp.exception.domain.EmailNotFoundException;
-import com.dela.employeemanagerapp.exception.domain.UserNotFoundException;
-import com.dela.employeemanagerapp.exception.domain.UsernameExistsException;
+import com.dela.employeemanagerapp.exception.domain.*;
 import com.sun.xml.bind.v2.TODO;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -111,6 +108,15 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler {
 
         HttpResponse httpResponse =
                 createHttpResponse(HttpStatus.NOT_FOUND, ex, "exception_message_user_not_found");
+
+        return new ResponseEntity<>(httpResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PageNotFoundException.class)
+    public ResponseEntity<HttpResponse> handlePageNotFoundException(PageNotFoundException ex) {
+
+        HttpResponse httpResponse =
+                createHttpResponse(NOT_FOUND, ex, "exception_message_page_not_found");
 
         return new ResponseEntity<>(httpResponse, HttpStatus.NOT_FOUND);
     }
