@@ -11,6 +11,8 @@ import com.dela.employeemanagerapp.utility.JWTTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.simplejavamail.api.email.Email;
+import org.simplejavamail.api.mailer.AsyncResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,8 +55,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User register(User userRequest) {
-        String password = generatePassword();
-        String encodedPassword = encodePassword(password);
+        String plainPassword = generatePassword();
+        String encodedPassword = encodePassword(plainPassword);
 
         Role userRole = roleService.findRoleByName(RoleEnum.ROLE_MANAGER);
 
@@ -71,12 +73,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .profileImageUrl(getProfileImageUrl())
                 .build();
 
-        log.info("new password: " + password);
+        log.info("new password: " + plainPassword);
         log.info("new encoded password: " + encodedPassword);
 
         userRole.setAuthorities(roleService.findAuthoritiesByRoles(Set.of(userRole)));
 
+//        sendNewRegistrationEmail(user.getEmail(), plainPassword);
+
         return userRepository.save(user);
+    }
+
+    private void sendNewRegistrationEmail(String email, String password) {
+        Email newRegistrationEmail = EmailService.sendNewRegistrationEmail(email, password);
+        EmailSender.buildMailer().sendMail(newRegistrationEmail, true).onSuccess(() -> {
+           log.info("cestitam, poslali ste mail");
+        });
     }
 
     @Override
