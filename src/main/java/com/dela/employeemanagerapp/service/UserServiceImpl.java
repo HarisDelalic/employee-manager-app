@@ -1,25 +1,26 @@
 package com.dela.employeemanagerapp.service;
 
-import com.dela.employeemanagerapp.domain.Authority;
+import com.dela.employeemanagerapp.config.SecurityConfig;
 import com.dela.employeemanagerapp.domain.Role;
 import com.dela.employeemanagerapp.domain.User;
 import com.dela.employeemanagerapp.domain.UserPrincipal;
 import com.dela.employeemanagerapp.domain.enums.RoleEnum;
 import com.dela.employeemanagerapp.exception.domain.UserNotFoundException;
 import com.dela.employeemanagerapp.repository.UserRepository;
+import com.dela.employeemanagerapp.utility.JWTTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,8 +34,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JWTTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
 
-    @Override
+    //    @Override
     public UserDetails loadUserByUsername(String username) {
         User foundUser = userRepository.findUserByUsername(username).map(user -> {
             user.setLastLoginDateDisplay(user.getLastLoginDate());
@@ -74,6 +77,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRole.setAuthorities(roleService.findAuthoritiesByRoles(Set.of(userRole)));
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public User login(User userRequest) {
+        authenticate(userRequest);
+
+        return userRepository.findUserByUsername(userRequest.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    @Override
+    public String getJwtToken(User user) {
+        return jwtTokenProvider.generateJwtToken(new UserPrincipal(user));
+    }
+
+    private void authenticate(User userRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                userRequest.getUsername(),
+                userRequest.getPassword()
+        ));
     }
 
     private String getProfileImageUrl() {
