@@ -9,6 +9,7 @@ import com.dela.employeemanagerapp.repository.UserRepository;
 import com.dela.employeemanagerapp.utility.JWTTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,12 +18,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.transaction.Transactional;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,6 +63,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         });
 
         return new UserPrincipal(foundUser);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not Found"));
     }
 
     @Override
@@ -104,13 +120,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void resetPassword(String email) {
-        userRepository.findUserByEmail(email).ifPresentOrElse(user -> {
-            User foundUser = userFactory.resetPassword(user);
-            userRepository.save(foundUser);
-        }, () -> {
+    public User resetPassword(String email) {
+        User user = userRepository.findUserByEmail(email).map(foundUser -> {
+            userFactory.resetPassword(foundUser);
+            return userRepository.save(foundUser);
+        }).orElseThrow(() -> {
             throw new UserNotFoundException("User not Found");
         });
+        return user;
     }
 
     @Override
@@ -124,6 +141,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else {
             throw new UserNotFoundException("User not Found");
         }
+    }
+
+    @Override
+    public byte[] getTemporaryProfileImage(String username) throws IOException {
+        URL tempProfileImageUrl = new URL(TEMP_PROFILE_IMAGE_BASE_URL + username);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try (InputStream inputStream = tempProfileImageUrl.openStream()){
+            IOUtils.copy(inputStream, outputStream);
+        }
+        return outputStream.toByteArray();
     }
 
     @Override
