@@ -11,4 +11,6 @@ public interface RoleService {
 
 //    TODO: create authorityService and add following
     Set<Authority> findAuthoritiesByRoles(Set<Role> userRoles);
+
+    Set<Authority> findAuthoritiesByRole(Role role);
 }

@@ -35,4 +35,13 @@ public class RoleServiceImpl implements RoleService {
 
         return authorityRepository.findAuthoritiesByNameIn(authorityEnums);
     }
+
+    @Override
+    public Set<Authority> findAuthoritiesByRole(Role role) {
+        Set<AuthorityEnum> authorityEnums = role.getAuthorities().stream()
+                .map(authority -> authority.getName()).collect(Collectors.toSet());
+
+        return authorityRepository
+                .findAuthoritiesByNameIn(authorityEnums);
+    }
 }

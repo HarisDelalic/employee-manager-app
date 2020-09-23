@@ -1,6 +1,7 @@
 package com.dela.employeemanagerapp.controller;
 
 import com.dela.employeemanagerapp.constant.SecurityConstant;
+import com.dela.employeemanagerapp.domain.Role;
 import com.dela.employeemanagerapp.domain.User;
 import com.dela.employeemanagerapp.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("/users")
@@ -23,7 +25,7 @@ public class UserController {
 
     @PostMapping(value = "/registration", headers="Accept=application/json")
     public ResponseEntity<User> register(@Valid @RequestBody User user) {
-        return new ResponseEntity<>(userService.register(user), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.register(user,  Collections.<Role>emptySet()), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/login")

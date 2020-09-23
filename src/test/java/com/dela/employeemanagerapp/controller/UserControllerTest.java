@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.Collections;
 import java.util.Set;
 
 import static org.hamcrest.core.Is.is;
@@ -58,6 +59,7 @@ class UserControllerTest {
     @WithMockUser(value = "spring")
     @Test
     void register() throws Exception {
+        Set<Role> userRoles = Set.of(Role.of(RoleEnum.ROLE_USER));
 
         fromRequest = User.builder()
                 .username("username")
@@ -73,10 +75,10 @@ class UserControllerTest {
                 .lastName(fromRequest.getLastName())
                 .isActive(true)
                 .isLocked(false)
-                .roles(Set.of(Role.of(RoleEnum.ROLE_USER)))
+                .roles(userRoles)
                 .build();
 
-        when(userService.register(fromRequest)).thenReturn(fromResponse);
+        when(userService.register(fromRequest,  Collections.<Role>emptySet())).thenReturn(fromResponse);
 
         mockMvc.perform(post("/users/registration")
                 .contentType(MediaType.APPLICATION_JSON)

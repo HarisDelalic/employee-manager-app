@@ -2,11 +2,13 @@ package com.dela.employeemanagerapp.service;
 
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.email.EmailBuilder;
+import org.springframework.stereotype.Component;
 
-public class EmailService {
+@Component
+public class EmailFactory {
     static final String SUBJECT = "Your Password";
 
-    static Email sendNewRegistrationEmail(String email, String password) {
+    public Email createRegistrationEmail(String email, String password) {
         return EmailBuilder.startingBlank()
                 .from("From", "delalicharis@gmail.com")
                 .to("To", email)

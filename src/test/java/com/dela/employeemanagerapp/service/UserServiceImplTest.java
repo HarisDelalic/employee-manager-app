@@ -6,11 +6,14 @@ import com.dela.employeemanagerapp.domain.enums.RoleEnum;
 import com.dela.employeemanagerapp.exception.domain.UserNotFoundException;
 import com.dela.employeemanagerapp.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
@@ -27,9 +30,13 @@ import static org.mockito.Mockito.times;
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
     private static final String USERNAME = "valid_username";
+    private static final String EMAIL = "valid_email@email.com";
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    UserFactory userFactory;
 
     @InjectMocks
     UserServiceImpl userService;
@@ -40,6 +47,7 @@ class UserServiceImplTest {
     void setUp() {
         user = User.builder()
                 .username(USERNAME)
+                .email(EMAIL)
                 .roles(Set.of(Role.builder().name(RoleEnum.ROLE_USER).build()))
                 .build();
     }
@@ -55,7 +63,7 @@ class UserServiceImplTest {
         then(userRepository).should(times(1)).save(user);
 
         assertEquals(USERNAME, userPrincipal.getUsername());
-        assertEquals(user.getLastLoginDateDisplay(), null);
+        assertNull(user.getLastLoginDateDisplay());
         assertEquals(user.getLastLoginDate(), LocalDate.now());
     }
 
@@ -71,5 +79,31 @@ class UserServiceImplTest {
         then(userRepository).should(times(0)).save(user);
 
         assertThat(exception.getMessage()).isEqualTo("User with username: " + USERNAME + " not found");
+    }
+
+    @Nested
+    @DisplayName("Reset Password Test")
+    class ResetPassword {
+
+        @Test
+        void givenUserExists_passwordResets() {
+            given(userRepository.findUserByEmail(user.getEmail())).willReturn(Optional.of(user));
+            given(userRepository.save(user)).willReturn(user);
+            given(userFactory.resetPassword(user)).willReturn(user);
+
+            userService.resetPassword(user.getEmail());
+
+            then(userFactory).should().resetPassword(user);
+            then(userRepository).should().save(user);
+        }
+
+        @Test
+        void givenUserDoesNotExist_exceptionIsThrown() {
+            given(userRepository.findUserByEmail(user.getEmail())).willReturn(Optional.empty());
+
+            assertThrows(UserNotFoundException.class, () -> { userService.resetPassword(user.getEmail()); });
+
+            then(userRepository).should(times(0)).save(user);
+        }
     }
 }
