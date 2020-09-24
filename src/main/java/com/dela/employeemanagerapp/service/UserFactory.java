@@ -58,6 +58,8 @@ public class UserFactory {
         String plainPassword = passwordFactory.generatePassword();
         String encodedPassword = passwordEncoder.encode(plainPassword);
 
+        log.info(plainPassword);
+
         emailSender.createAndSendNewUserEmail(user.getEmail(), plainPassword);
 
         user.setPassword(encodedPassword);

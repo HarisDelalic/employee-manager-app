@@ -18,9 +18,7 @@ public class Role {
     private Long id;
     @Enumerated(EnumType.STRING)
     private RoleEnum name;
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "role_authorities",
             joinColumns = @JoinColumn(

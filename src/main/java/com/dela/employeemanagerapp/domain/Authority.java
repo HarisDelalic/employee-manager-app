@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.*;
 
 @Entity
 @Getter
@@ -20,10 +19,4 @@ public class Authority {
     private Long id;
     @Enumerated(EnumType.STRING)
     private AuthorityEnum name;
-    @ManyToMany(mappedBy = "authorities")
-    private Set<Role> roles;
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 }

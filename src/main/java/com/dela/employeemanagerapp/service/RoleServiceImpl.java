@@ -9,9 +9,7 @@ import com.dela.employeemanagerapp.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,22 +24,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-//    fetch all authorities for roles, and return as entities from DB
-    public Set<Authority> findAuthoritiesByRoles(Set<Role> userRoles) {
-        Set<AuthorityEnum> authorityEnums = userRoles.stream().flatMap(
-                userRole ->
-                        Arrays.stream(userRole.getName().getAuthorities())
-        ).collect(Collectors.toSet());
+    public Set<Authority> findAuthoritiesByRole(Role role) {
+        AuthorityEnum[] authorityEnums = role.getName().getAuthorities();
 
         return authorityRepository.findAuthoritiesByNameIn(authorityEnums);
-    }
-
-    @Override
-    public Set<Authority> findAuthoritiesByRole(Role role) {
-        Set<AuthorityEnum> authorityEnums = role.getAuthorities().stream()
-                .map(authority -> authority.getName()).collect(Collectors.toSet());
-
-        return authorityRepository
-                .findAuthoritiesByNameIn(authorityEnums);
     }
 }

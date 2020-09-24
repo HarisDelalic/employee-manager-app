@@ -8,5 +8,5 @@ import java.util.Set;
 
 public interface AuthorityRepository extends JpaRepository<Authority, Long> {
 
-    Set<Authority> findAuthoritiesByNameIn(Set<AuthorityEnum> authorityEnums);
+    Set<Authority> findAuthoritiesByNameIn(AuthorityEnum[] authorityEnums);
 }

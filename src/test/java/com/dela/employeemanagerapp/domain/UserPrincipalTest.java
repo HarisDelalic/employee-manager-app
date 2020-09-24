@@ -33,13 +33,13 @@ class UserPrincipalTest {
 
         Role userRole = Role.builder()
                 .name(RoleEnum.ROLE_USER)
-                .users(Set.of(user))
+//                .users(Set.of(user))
                 .authorities(Set.of(read))
                 .build();
 
         Role superUserRole = Role.builder()
                 .name(RoleEnum.ROLE_SUPERUSER)
-                .users(Set.of(user))
+//                .users(Set.of(user))
                 .authorities(Set.of(read, update, create, delete))
                 .build();
 

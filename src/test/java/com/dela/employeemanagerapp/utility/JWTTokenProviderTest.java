@@ -42,21 +42,16 @@ class JWTTokenProviderTest {
         Role userRole = Role.builder()
                 .id(1L)
                 .name(RoleEnum.ROLE_USER)
-                .users(Set.of(user))
                 .authorities(Set.of(read))
                 .build();
 
         Role superUserRole = Role.builder()
                 .id(1L)
                 .name(RoleEnum.ROLE_SUPERUSER)
-                .users(Set.of(user))
                 .authorities(Set.of(read, update, delete))
                 .build();
 
         user.setRoles(Set.of(userRole, superUserRole));
-        read.setRoles(Set.of(userRole));
-        update.setRoles(Set.of(userRole));
-        delete.setRoles(Set.of(userRole));
 
         jwtTokenProvider = new JWTTokenProvider();
         ReflectionTestUtils.setField(jwtTokenProvider, "secret", "secret");

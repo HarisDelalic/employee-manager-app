@@ -9,8 +9,5 @@ import java.util.Set;
 public interface RoleService {
     Role findRoleByName(RoleEnum roleEnum);
 
-//    TODO: create authorityService and add following
-    Set<Authority> findAuthoritiesByRoles(Set<Role> userRoles);
-
     Set<Authority> findAuthoritiesByRole(Role role);
 }
