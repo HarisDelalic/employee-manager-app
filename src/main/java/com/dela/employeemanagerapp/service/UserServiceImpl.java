@@ -95,6 +95,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public User createUserFromInsideApp(User user, MultipartFile image) throws IOException {
         User withProfileImage = user.toBuilder()
                 .profileImageUrl(getTemporaryProfileImageUrl(user.getUsername())).build();

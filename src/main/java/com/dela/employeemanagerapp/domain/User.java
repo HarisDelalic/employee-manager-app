@@ -1,9 +1,6 @@
 package com.dela.employeemanagerapp.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@EqualsAndHashCode
 @Entity
 public class User implements Serializable {
     @Id
@@ -31,7 +29,7 @@ public class User implements Serializable {
     private LocalDate lastLoginDate;
     private LocalDate lastLoginDateDisplay;
     private LocalDate joinDate;
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(

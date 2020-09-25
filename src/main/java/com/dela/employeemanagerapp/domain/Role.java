@@ -18,7 +18,7 @@ public class Role {
     private Long id;
     @Enumerated(EnumType.STRING)
     private RoleEnum name;
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "role_authorities",
             joinColumns = @JoinColumn(

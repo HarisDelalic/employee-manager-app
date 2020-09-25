@@ -5,6 +5,7 @@ import com.dela.employeemanagerapp.domain.Role;
 import com.dela.employeemanagerapp.domain.User;
 import com.dela.employeemanagerapp.domain.enums.AuthorityEnum;
 import com.dela.employeemanagerapp.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +31,7 @@ import static com.dela.employeemanagerapp.constant.FileConstant.*;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-
+    private final ObjectMapper objectMapper;
     private final UserService userService;
 
     @GetMapping(value = "/")
@@ -50,15 +51,17 @@ public class UserController {
 
     @PostMapping(value = "/add")
     public ResponseEntity<User> createUserFromInsideApp(
-            @Valid @RequestBody User user,
+            @RequestParam("user") String userAsJson,
             @RequestParam(value = "profileImage", required = false) MultipartFile image) throws IOException {
+        User user = objectMapper.readValue(userAsJson, User.class);
         return new ResponseEntity<User>(userService.createUserFromInsideApp(user, image), HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/update")
     public ResponseEntity<User> update(
-            @RequestBody User user,
+            @RequestParam("user") String userAsJson,
             @RequestParam(value = "profileImage", required = false) MultipartFile image) throws IOException {
+        User user = objectMapper.readValue(userAsJson, User.class);
         return new ResponseEntity<User>(userService.updateUser(user, image), HttpStatus.OK);
     }
 
@@ -71,9 +74,9 @@ public class UserController {
 
     @PutMapping("/updateProfileImage/{username}")
     public ResponseEntity<User> updateProfileImage(
-            @RequestParam String userame,
+            @RequestParam String username,
             @RequestParam(value = "profileImage", required = false) MultipartFile image) throws IOException {
-        return new ResponseEntity<User>(userService.updateProfileImage(userame, image), HttpStatus.OK);
+        return new ResponseEntity<User>(userService.updateProfileImage(username, image), HttpStatus.OK);
     }
 
     @PutMapping(value = "/resetpassword/{email}")
@@ -87,7 +90,7 @@ public class UserController {
         return Files.readAllBytes(Paths.get(USER_FOLDER + username + FORWARD_SLASH + filename));
     }
 
-    @GetMapping(value = "/image/{username}", produces = MediaType.IMAGE_JPEG_VALUE)
+    @GetMapping(value = "/image/profile/{username}", produces = MediaType.IMAGE_JPEG_VALUE)
     public byte[] getTemporaryProfileImage(@PathVariable String username) throws IOException {
         return userService.getTemporaryProfileImage(username);
     }
