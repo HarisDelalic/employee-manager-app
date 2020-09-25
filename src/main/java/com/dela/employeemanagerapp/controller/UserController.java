@@ -3,11 +3,9 @@ package com.dela.employeemanagerapp.controller;
 import com.dela.employeemanagerapp.constant.SecurityConstant;
 import com.dela.employeemanagerapp.domain.Role;
 import com.dela.employeemanagerapp.domain.User;
-import com.dela.employeemanagerapp.domain.enums.AuthorityEnum;
 import com.dela.employeemanagerapp.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,15 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-import static com.dela.employeemanagerapp.constant.FileConstant.*;
+import static com.dela.employeemanagerapp.constant.FileConstant.FORWARD_SLASH;
+import static com.dela.employeemanagerapp.constant.FileConstant.USER_FOLDER;
 
 @RestController
 @RequestMapping("/users")
@@ -72,7 +69,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/updateProfileImage/{username}")
+    @PostMapping("/updateProfileImage/{username}")
     public ResponseEntity<User> updateProfileImage(
             @RequestParam String username,
             @RequestParam(value = "profileImage", required = false) MultipartFile image) throws IOException {
