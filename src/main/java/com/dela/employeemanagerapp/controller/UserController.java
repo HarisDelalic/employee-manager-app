@@ -31,9 +31,16 @@ public class UserController {
     private final ObjectMapper objectMapper;
     private final UserService userService;
 
-    @GetMapping(value = "/")
+    @GetMapping(value = "/all")
     public ResponseEntity<List<User>> findAll() {
         return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/find")
+    public ResponseEntity<List<User>> findByUsernameOrEmailOrLastNameOrFirstName(
+            @RequestParam("searchTerm") String searchTerm) {
+        return new ResponseEntity<List<User>>(userService.
+                findByUsernameOrEmailOrLastNameOrFirstName(searchTerm), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}")
@@ -43,7 +50,9 @@ public class UserController {
 
     @PostMapping(value = "/registration", headers = "Accept=application/json")
     public ResponseEntity<User> register(@Valid @RequestBody User user) {
-        return new ResponseEntity<>(userService.register(user, Collections.<Role>emptySet()), HttpStatus.CREATED);
+        User registerUser = userService.register(user, Collections.<Role>emptySet());
+        HttpHeaders headers = saveJwtTokenToHeaders(registerUser);
+        return new ResponseEntity<>(registerUser, headers, HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/add")
@@ -56,16 +65,17 @@ public class UserController {
 
     @PutMapping(value = "/update")
     public ResponseEntity<User> update(
+            @RequestParam("username") String oldUsername,
             @RequestParam("user") String userAsJson,
             @RequestParam(value = "profileImage", required = false) MultipartFile image) throws IOException {
         User user = objectMapper.readValue(userAsJson, User.class);
-        return new ResponseEntity<User>(userService.updateUser(user, image), HttpStatus.OK);
+        return new ResponseEntity<User>(userService.updateUser(oldUsername, user, image), HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/delete/{id}")
-    @PreAuthorize("hasAuthority(AuthorityEnum.USER_DELETE)")
-    public ResponseEntity<String> deleteUser(@RequestParam Long id) {
-        userService.deleteUser(id);
+    @DeleteMapping(value = "/delete/{username}")
+    @PreAuthorize("hasAnyAuthority('user:delete')")
+    public ResponseEntity<String> deleteUser(@PathVariable String username) {
+        userService.deleteUser(username);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -95,11 +105,16 @@ public class UserController {
     @PostMapping(value = "/login")
     public ResponseEntity<User> login(@RequestBody User requestUser) {
         User user = userService.login(requestUser);
+        HttpHeaders headers = saveJwtTokenToHeaders(user);
+
+        return new ResponseEntity<>(user, headers, HttpStatus.OK);
+    }
+
+    private HttpHeaders saveJwtTokenToHeaders(User user) {
         String jwtToken = userService.getJwtToken(user);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(SecurityConstant.JWT_TOKEN_HEADER, jwtToken);
-
-        return new ResponseEntity<>(user, headers, HttpStatus.OK);
+        return headers;
     }
 }

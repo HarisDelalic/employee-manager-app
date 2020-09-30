@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.dela.employeemanagerapp.constant.FileConstant.*;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -97,27 +98,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public User createUserFromInsideApp(User user, MultipartFile image) throws IOException {
-        User withProfileImage = user.toBuilder()
-                .profileImageUrl(getTemporaryProfileImageUrl(user.getUsername())).build();
+        User withProfileImage = saveProfileImageOnSystem(user, image);
 
-        saveProfileImageOnSystem(user, image);
+        Set<RoleEnum> userRoles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        user.setRoles(roleService.findRolesByNameIn(userRoles));
 
         return register(withProfileImage, user.getRoles());
     }
 
     @Override
-    public User updateUser(User user, MultipartFile image) throws IOException {
+    public User updateUser(String oldUsername, User user, MultipartFile image) throws IOException {
         if (image != null) {
             saveProfileImageOnSystem(user, image);
         }
 
-        User updatedUser = userFactory.updateUser(user, user.getRoles());
+        Set<RoleEnum> userRoles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
+        user.setRoles(roleService.findRolesByNameIn(userRoles));
+
+        User updatedUser = userFactory.updateUser(oldUsername, user, user.getRoles());
         return userRepository.save(updatedUser);
     }
 
     @Override
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUser(String username) {
+        userRepository.deleteByUsername(username);
     }
 
     @Override
@@ -155,6 +159,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public List<User> findByUsernameOrEmailOrLastNameOrFirstName(String searchTerm) {
+        return userRepository.findUsers(searchTerm);
+    }
+
+    @Override
     public User login(User userRequest) {
         authenticate(userRequest);
 
@@ -175,7 +184,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path(DEFAULT_USER_IMAGE_PATH + username).toUriString();
     }
 
-    private void saveProfileImageOnSystem(User user, MultipartFile profileImage) throws IOException, RuntimeException {
+    private User saveProfileImageOnSystem(User user, MultipartFile profileImage) throws IOException, RuntimeException {
         if (profileImage != null) {
             if (!Arrays.asList(IMAGE_JPEG_VALUE, IMAGE_PNG_VALUE, IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
                 throw new RuntimeException(profileImage.getOriginalFilename() + NOT_AN_IMAGE_FILE);
@@ -188,9 +197,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             Files.deleteIfExists(Paths.get(userFolder + user.getUsername() + DOT + JPG_EXTENSION));
             Files.copy(profileImage.getInputStream(), userFolder.resolve(user.getUsername() + DOT + JPG_EXTENSION), REPLACE_EXISTING);
             user.setProfileImageUrl(setProfileImageUrl(user.getUsername()));
-            userRepository.save(user);
             log.info(FILE_SAVED_IN_FILE_SYSTEM + profileImage.getOriginalFilename());
         }
+        return user;
     }
 
     private String setProfileImageUrl(String username) {

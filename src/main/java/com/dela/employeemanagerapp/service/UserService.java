@@ -16,10 +16,12 @@ public interface UserService {
     User createUserFromInsideApp(User user, MultipartFile image) throws IOException;
     User findById(Long id);
     List<User> findAll();
-    User updateUser(User user, MultipartFile image) throws IOException;
-    void deleteUser(Long id);
+    User updateUser(String oldUsername, User user, MultipartFile image) throws IOException;
+    void deleteUser(String username);
     User resetPassword(String email);
     User updateProfileImage(String username, MultipartFile image) throws IOException;
 
     byte[] getTemporaryProfileImage(String username) throws IOException;
+
+    List<User> findByUsernameOrEmailOrLastNameOrFirstName(String searchTerm);
 }

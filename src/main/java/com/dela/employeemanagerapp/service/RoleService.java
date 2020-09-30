@@ -9,5 +9,7 @@ import java.util.Set;
 public interface RoleService {
     Role findRoleByName(RoleEnum roleEnum);
 
+    Set<Role> findRolesByNameIn(Set<RoleEnum> roleEnum);
+
     Set<Authority> findAuthoritiesByRole(Role role);
 }

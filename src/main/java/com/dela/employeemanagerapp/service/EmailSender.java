@@ -18,7 +18,7 @@ public class EmailSender {
     private static final String SMTP = "smtp.mailtrap.io";
     private static final int PORT = 2525;
     private static final String USERNAME = "e8fff7deaac3a0";
-    private static final String PASSWORD = "hidden";
+    private static final String PASSWORD = "52b3d64efdb439";
 
     public Mailer buildEmailSender() {
         return MailerBuilder

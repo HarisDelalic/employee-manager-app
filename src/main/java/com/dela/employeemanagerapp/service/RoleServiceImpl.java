@@ -24,6 +24,11 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Set<Role> findRolesByNameIn(Set<RoleEnum> roleEnum) {
+        return roleRepository.findRolesByNameIn(roleEnum);
+    }
+
+    @Override
     public Set<Authority> findAuthoritiesByRole(Role role) {
         AuthorityEnum[] authorityEnums = role.getName().getAuthorities();
 

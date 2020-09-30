@@ -41,8 +41,8 @@ public class UserFactory {
         return user;
     }
 
-    public User updateUser(User userData, Set<Role> userRoles) {
-        User user = userRepository.findUserByUsername(userData.getUsername()).map(foundUser -> {
+    public User updateUser(String oldUsername, User userData, Set<Role> userRoles) {
+        User user = userRepository.findUserByUsername(oldUsername).map(foundUser -> {
             foundUser.setFirstName(userData.getFirstName());
             foundUser.setLastName(userData.getLastName());
             foundUser.setUsername(userData.getUsername());

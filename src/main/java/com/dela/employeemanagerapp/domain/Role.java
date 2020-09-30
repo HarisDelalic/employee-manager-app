@@ -34,5 +34,9 @@ public class Role {
         return Role.builder().name(roleEnum).build();
     }
 
-
+    // When we send role from frontend, we are just specify roleName,
+    // so objectMapper needs to know how to construct role object based on just role name
+    public Role(String name) {
+        this.name = RoleEnum.valueOf(name);
+    }
 }
